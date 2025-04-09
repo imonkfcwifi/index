@@ -25,11 +25,10 @@
       <input type="text" id="title" placeholder="직함 (도로교통연구실 연구원)">
       <input type="text" id="dept" placeholder="부서 (도로교통연구실)">
       <input type="text" id="center" placeholder="센터 (기술연구센터)">
-      <input type="url"  id="photo" placeholder="사진/로고 URL">
+      <input type="url"  id="web"   placeholder="웹사이트 (https://example.com)">
       <input type="text" id="tel"   placeholder="T. 번호 (02-3490-1088)">
       <input type="text" id="fax"   placeholder="F. 번호 (02-3490-1019)">
       <input type="text" id="mob"   placeholder="M. 번호 (010-6886-0368)">
-      <input type="url"  id="web"   placeholder="웹사이트 (https://...)">
       <input type="email" id="email" placeholder="이메일 (roh@koroad.or.kr)">
       <button onclick="generate()">HTML 생성</button>
       <h3>생성된 코드</h3>
@@ -45,19 +44,8 @@
   <script>
     function generate() {
       const v = id => document.getElementById(id).value.trim();
-      const data = {
-        name: v('name'),
-        ename: v('ename'),
-        title: v('title'),
-        dept: v('dept'),
-        center: v('center'),
-        photo: v('photo'),
-        tel: v('tel'),
-        fax: v('fax'),
-        mob: v('mob'),
-        web: v('web'),
-        email: v('email'),
-      };
+      const web = v('web').replace(/\/+$/, ''); // 끝 슬래시 제거
+      const logoUrl = web + '/logo.png';
       const html = `
 <table cellpadding="0" cellspacing="0" style="width:480px;font-family:Segoe UI, Tahoma, sans-serif;">
   <tr>
@@ -65,28 +53,28 @@
       <table cellpadding="0" cellspacing="0" style="width:100%;">
         <tr>
           <td style="width:64px;vertical-align:top;">
-            ${data.photo ? `<img src="${data.photo}" width="64" height="64" alt="Profile">` : ''}
+            <img src="${logoUrl}" width="64" height="64" alt="Logo">
           </td>
           <td style="padding-left:12px;vertical-align:middle;">
             <div style="font-size:16px;font-weight:600;color:#222;">
-              ${data.name} ${data.ename ? `<span style="font-weight:400;font-size:14px;color:#555;">(${data.ename})</span>` : ''}
+              ${v('name')} ${v('ename') ? `<span style="font-weight:400;font-size:14px;color:#555;">(${v('ename')})</span>` : ''}
             </div>
             <div style="margin-top:4px;font-size:13px;color:#666;">
-              ${data.center} ${data.dept ? `| ${data.dept}` : ''}
+              ${v('center')} ${v('dept') ? `| ${v('dept')}` : ''}
             </div>
             <div style="font-size:13px;color:#666;">
-              ${data.title}
+              ${v('title')}
             </div>
           </td>
         </tr>
       </table>
       <hr>
       <table cellpadding="0" cellspacing="0" style="width:100%;font-size:13px;color:#333;">
-        ${data.tel   ? `<tr><td style="width:28px;">📞</td><td>${data.tel}</td></tr>` : ''}
-        ${data.fax   ? `<tr><td>📠</td><td>${data.fax}</td></tr>` : ''}
-        ${data.mob   ? `<tr><td>📱</td><td>${data.mob}</td></tr>` : ''}
-        ${data.email ? `<tr><td>✉️</td><td>${data.email}</td></tr>` : ''}
-        ${data.web   ? `<tr><td>🌐</td><td>${data.web}</td></tr>` : ''}
+        ${v('tel')   ? `<tr><td style="width:28px;">📞</td><td>${v('tel')}</td></tr>` : ''}
+        ${v('fax')   ? `<tr><td>📠</td><td>${v('fax')}</td></tr>` : ''}
+        ${v('mob')   ? `<tr><td>📱</td><td>${v('mob')}</td></tr>` : ''}
+        ${v('email') ? `<tr><td>✉️</td><td>${v('email')}</td></tr>` : ''}
+        ${web       ? `<tr><td>🌐</td><td><a href="${web}" target="_blank">${web}</a></td></tr>` : ''}
       </table>
     </td>
   </tr>
