@@ -2,90 +2,144 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>명함 수정 및 HTML 생성기</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>명함 생성기</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-      line-height: 1.5;
-    }
-    h1, h2 {
+      background: #fafafa;
       color: #333;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+    .preview {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+    }
+    form {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
     }
     .form-group {
-      margin-bottom: 10px;
+      margin-bottom: 15px;
     }
     label {
       display: block;
-      font-weight: bold;
-      margin-bottom: 4px;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 5px;
     }
     input {
       width: 100%;
-      max-width: 480px;
-      padding: 8px;
-      box-sizing: border-box;
+      padding: 10px;
+      font-size: 14px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input:focus {
+      border-color: #aaa;
     }
     button {
-      padding: 10px 20px;
+      background-color: #007aff;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 15px;
       font-size: 14px;
-      margin-top: 10px;
       cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    button:hover {
+      background-color: #005bb5;
+    }
+    .code-area {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      position: relative;
     }
     textarea {
       width: 100%;
-      max-width: 480px;
-      height: 300px;
-      margin-top: 10px;
+      height: 200px;
       padding: 10px;
-      box-sizing: border-box;
       font-family: monospace;
+      font-size: 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      resize: vertical;
+    }
+    .copy-button {
+      position: absolute;
+      top: 20px;
+      right: 20px;
     }
   </style>
 </head>
 <body>
-  <h1>명함 수정 및 HTML 생성기</h1>
-  <form id="businessCardForm">
-    <div class="form-group">
-      <label for="name">이름 (한글)</label>
-      <input type="text" id="name" value="노 우 현">
+  <div class="container">
+    <h1>명함 생성기</h1>
+    <div class="preview" id="preview"></div>
+    <form id="businessCardForm" oninput="updatePreview()">
+      <div class="form-group">
+        <label for="name">이름 (한글)</label>
+        <input type="text" id="name" value="노 우 현">
+      </div>
+      <div class="form-group">
+        <label for="enName">이름 (영문)</label>
+        <input type="text" id="enName" value="U‑Hyun Roh">
+      </div>
+      <div class="form-group">
+        <label for="org1">기관 (1)</label>
+        <input type="text" id="org1" value="한국도로협회 기술연구센터">
+      </div>
+      <div class="form-group">
+        <label for="org2">부서/직함</label>
+        <input type="text" id="org2" value="도로교통연구실 연구원">
+      </div>
+      <div class="form-group">
+        <label for="phone">전화번호 (T.)</label>
+        <input type="text" id="phone" value="02-3490-1088">
+      </div>
+      <div class="form-group">
+        <label for="fax">팩스 (F.)</label>
+        <input type="text" id="fax" value="02-3490-1019">
+      </div>
+      <div class="form-group">
+        <label for="mobile">휴대폰 (M.)</label>
+        <input type="text" id="mobile" value="010-6886-0368">
+      </div>
+      <div class="form-group">
+        <label for="email">이메일</label>
+        <input type="text" id="email" value="roh@koroad.or.kr">
+      </div>
+      <button type="button" onclick="generateHTML()">HTML 생성</button>
+    </form>
+    <div class="code-area">
+      <button class="copy-button" onclick="copyHTML()">복사</button>
+      <textarea id="result" readonly></textarea>
     </div>
-    <div class="form-group">
-      <label for="enName">이름 (영문)</label>
-      <input type="text" id="enName" value="U‑Hyun Roh">
-    </div>
-    <div class="form-group">
-      <label for="org1">기관 (1)</label>
-      <input type="text" id="org1" value="한국도로협회 기술연구센터">
-    </div>
-    <div class="form-group">
-      <label for="org2">부서/직함</label>
-      <input type="text" id="org2" value="도로교통연구실 연구원">
-    </div>
-    <div class="form-group">
-      <label for="phone">전화번호 (T.)</label>
-      <input type="text" id="phone" value="02-3490-1088">
-    </div>
-    <div class="form-group">
-      <label for="fax">팩스 (F.)</label>
-      <input type="text" id="fax" value="02-3490-1019">
-    </div>
-    <div class="form-group">
-      <label for="mobile">휴대폰 (M.)</label>
-      <input type="text" id="mobile" value="010-6886-0368">
-    </div>
-    <div class="form-group">
-      <label for="email">이메일</label>
-      <input type="text" id="email" value="roh@koroad.or.kr">
-    </div>
-    <button type="button" onclick="generateHTML()">확인</button>
-  </form>
-
-  <h2>생성된 HTML 코드 (복사하여 사용하세요)</h2>
-  <textarea id="result" readonly></textarea>
-
+  </div>
   <script>
-    function generateHTML() {
+    function createBusinessCardHTML() {
       const name = document.getElementById("name").value;
       const enName = document.getElementById("enName").value;
       const org1 = document.getElementById("org1").value;
@@ -95,7 +149,7 @@
       const mobile = document.getElementById("mobile").value;
       const email = document.getElementById("email").value;
       
-      const htmlCode = `
+      return `
 <table cellpadding="0" cellspacing="0" style="width:480px;font-family:Segoe UI, Tahoma, sans-serif;">
   <tbody>
     <tr>
@@ -104,23 +158,23 @@
           <tbody>
             <tr>
               <td style="width:64px;vertical-align:top;">
-                <p style="font-family:굴림체;font-size:9pt;color:rgb(0, 0, 0);margin-top:0;margin-bottom:0;line-height:1.2;">
+                <p style="font-family:굴림체;font-size:9pt;color:#000;margin:0;line-height:1.2;">
                   <img src="https://img.stibee.com/c80ba20a-5210-4ca9-840f-842741f5420b.png" width="64" height="64" style="border-radius:50%;display:block;" alt="Profile" />
                 </p>
               </td>
               <td style="padding-left:12px;vertical-align:middle;">
                 <div style="font-size:16px;font-weight:600;color:#222;">
-                  <p style="font-family:굴림체;font-size:12pt;color:rgb(34, 34, 34);margin-top:0;margin-bottom:0;line-height:1.2;">
+                  <p style="font-family:굴림체;font-size:12pt;color:#222;margin:0;line-height:1.2;">
                     ${name} <span style="font-weight:400;font-size:14px;color:#555;">(${enName})</span>
                   </p>
                 </div>
                 <div style="margin-top:4px;font-size:13px;color:#666;">
-                  <p style="font-family:굴림체;font-size:10pt;color:rgb(102, 102, 102);margin-top:0;margin-bottom:0;line-height:1.2;">
+                  <p style="font-family:굴림체;font-size:10pt;color:#666;margin:0;line-height:1.2;">
                     ${org1}
                   </p>
                 </div>
                 <div style="font-size:13px;color:#666;">
-                  <p style="font-family:굴림체;font-size:10pt;color:rgb(102, 102, 102);margin-top:0;margin-bottom:0;line-height:1.2;">
+                  <p style="font-family:굴림체;font-size:10pt;color:#666;margin:0;line-height:1.2;">
                     ${org2}
                   </p>
                 </div>
@@ -133,32 +187,32 @@
           <tbody>
             <tr>
               <td style="width:28px;vertical-align:middle;">
-                <p style="font-family:굴림체;font-size:9pt;color:rgb(0, 0, 0);margin:0;line-height:1.2;">📞</p>
+                <p style="font-family:굴림체;font-size:9pt;color:#000;margin:0;line-height:1.2;">📞</p>
               </td>
               <td style="vertical-align:middle;">
-                <p style="font-family:굴림체;font-size:9pt;color:rgb(0, 0, 0);margin:0;line-height:1.2;">T. ${phone}</p>
+                <p style="font-family:굴림체;font-size:9pt;color:#000;margin:0;line-height:1.2;">T. ${phone}</p>
               </td>
             </tr>
             <tr>
               <td style="padding-top:6px;vertical-align:middle;">
-                <p style="font-family:굴림체;font-size:9pt;color:rgb(0, 0, 0);margin:0;line-height:1.2;">📠</p>
+                <p style="font-family:굴림체;font-size:9pt;color:#000;margin:0;line-height:1.2;">📠</p>
               </td>
               <td style="padding-top:6px;vertical-align:middle;">
-                <p style="font-family:굴림체;font-size:9pt;color:rgb(0, 0, 0);margin:0;line-height:1.2;">F. ${fax}</p>
+                <p style="font-family:굴림체;font-size:9pt;color:#000;margin:0;line-height:1.2;">F. ${fax}</p>
               </td>
             </tr>
             <tr>
               <td style="padding-top:6px;vertical-align:middle;">
-                <p style="font-family:굴림체;font-size:9pt;color:rgb(0, 0, 0);margin:0;line-height:1.2;">📱</p>
+                <p style="font-family:굴림체;font-size:9pt;color:#000;margin:0;line-height:1.2;">📱</p>
               </td>
               <td style="padding-top:6px;vertical-align:middle;">
-                <p style="font-family:굴림체;font-size:9pt;color:rgb(0, 0, 0);margin:0;line-height:1.2;">M. ${mobile}</p>
+                <p style="font-family:굴림체;font-size:9pt;color:#000;margin:0;line-height:1.2;">M. ${mobile}</p>
               </td>
             </tr>
           </tbody>
         </table>
         <div style="margin-top:12px;font-size:12px;color:#777;">
-          <p style="font-family:굴림체;font-size:9pt;color:rgb(119, 119, 119);margin:0;line-height:1.2;">
+          <p style="font-family:굴림체;font-size:9pt;color:#777;margin:0;line-height:1.2;">
             🌐 https://www.kroad.or.kr/ &nbsp;|&nbsp; ✉️ ${email}
           </p>
         </div>
@@ -167,9 +221,28 @@
   </tbody>
 </table>
       `.trim();
-      
-      document.getElementById("result").value = htmlCode;
     }
+    
+    function updatePreview() {
+      document.getElementById("preview").innerHTML = createBusinessCardHTML();
+    }
+    
+    function generateHTML() {
+      const generatedHTML = createBusinessCardHTML();
+      document.getElementById("result").value = generatedHTML;
+      updatePreview();
+    }
+    
+    function copyHTML() {
+      const resultTextarea = document.getElementById("result");
+      resultTextarea.select();
+      resultTextarea.setSelectionRange(0, 99999);
+      navigator.clipboard.writeText(resultTextarea.value)
+        .then(() => alert("HTML 코드가 클립보드에 복사되었습니다!"))
+        .catch(err => alert("복사 실패: " + err));
+    }
+    
+    window.addEventListener("DOMContentLoaded", updatePreview);
   </script>
 </body>
 </html>
