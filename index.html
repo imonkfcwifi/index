@@ -30,7 +30,7 @@
       <input type="text" id="fax"    placeholder="F. 번호 (02-3490-1019)">
       <input type="text" id="mob"    placeholder="M. 번호 (010-6886-0368)">
       <input type="email" id="email" placeholder="✉️ 이메일 (roh@koroad.or.kr)">
-      <button onclick="generate()">HTML 생성</button>
+      <button id="genBtn">HTML 생성</button>
       <h3>생성된 코드</h3>
       <textarea id="output" rows="10" readonly></textarea>
     </div>
@@ -42,14 +42,20 @@
   </div>
 
   <script>
-    const FIXED = {
-      web:  'https://www.kroad.or.kr/',
-      logo: 'https://img.stibee.com/c80ba20a-5210-4ca9-840f-842741f5420b.png'
-    };
+    (function() {
+      const FIXED = {
+        web:  'https://www.kroad.or.kr/',
+        logo: 'https://img.stibee.com/c80ba20a-5210-4ca9-840f-842741f5420b.png'
+      };
 
-    function generate() {
-      const v = id => document.getElementById(id).value.trim();
-      const html = `
+      function v(id) {
+        return document.getElementById(id).value.trim();
+      }
+
+      function generate() {
+        console.log('generate() called');
+        const webText = FIXED.web.replace(/^https?:\/\//, '');
+        const html = `
 <table cellpadding="0" cellspacing="0" style="width:480px;font-family:Segoe UI, Tahoma, sans-serif;">
   <tr>
     <td style="padding:12px;background-color:#ffffff;border:1px solid #e0e0e0;border-radius:8px;">
@@ -63,9 +69,7 @@
               ${v('name')} ${v('ename') ? `<span style="font-weight:400;font-size:14px;color:#555;">(${v('ename')})</span>` : ''}
             </div>
             <div style="margin-top:4px;font-size:13px;color:#666;">
-              ${FIXED.web.replace(/https?:\\/\\//, '')}
-              ${v('center')  ? `| ${v('center')}` : ''}
-              ${v('dept')    ? `| ${v('dept')}`   : ''}
+              ${webText} ${v('center')  ? `| ${v('center')}` : ''} ${v('dept')    ? `| ${v('dept')}`   : ''}
             </div>
             <div style="font-size:13px;color:#666;">
               ${v('title')}
@@ -85,9 +89,12 @@
   </tr>
 </table>`.trim();
 
-      document.getElementById('output').value     = html;
-      document.getElementById('sigPreview').innerHTML = html;
-    }
+        document.getElementById('output').value       = html;
+        document.getElementById('sigPreview').innerHTML = html;
+      }
+
+      document.getElementById('genBtn').addEventListener('click', generate);
+    })();
   </script>
 </body>
 </html>
