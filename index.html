@@ -2,99 +2,137 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>이메일 서명 생성기</title>
+  <title>명함 HTML 생성기</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; padding: 0; display: flex; min-height: 100vh; }
-    .container { display: flex; flex: 1; }
-    .panel { flex: 1; padding: 20px; box-sizing: border-box; }
-    .panel input, .panel textarea { width: 100%; margin-bottom: 10px; padding: 8px; box-sizing: border-box; }
-    .preview { background: #f9f9f9; border-left: 1px solid #ddd; }
-    .signature { border:1px solid #e0e0e0; border-radius:8px; padding:12px; width:480px; }
-    .signature img { border-radius:50%; }
-    .signature hr { border:none; border-top:1px solid #f0f0f0; margin:12px 0; }
-    button { padding: 8px 12px; cursor: pointer; }
+    body { font-family: 'Segoe UI', Tahoma, sans-serif; margin: 20px; }
+    form { margin-bottom: 20px; }
+    label { display: inline-block; width: 120px; margin-top: 6px; }
+    input { width: 250px; margin-top: 6px; }
+    textarea { width: 100%; font-family: monospace; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <!-- 입력 패널 -->
-    <div class="panel">
-      <h2>정보 입력</h2>
-      <input type="text" id="name"   placeholder="이름 (한글)">
-      <input type="text" id="ename"  placeholder="영문 이름 (U‑Hyun Roh)">
-      <input type="text" id="center" placeholder="센터 (기술연구센터)">
-      <input type="text" id="dept"   placeholder="부서 (도로교통연구실)">
-      <input type="text" id="title"  placeholder="직함 (연구원)">
-      <input type="text" id="tel"    placeholder="T. 번호 (02-3490-1088)">
-      <input type="text" id="fax"    placeholder="F. 번호 (02-3490-1019)">
-      <input type="text" id="mob"    placeholder="M. 번호 (010-6886-0368)">
-      <input type="email" id="email" placeholder="✉️ 이메일 (roh@koroad.or.kr)">
-      <button id="genBtn">HTML 생성</button>
-      <h3>생성된 코드</h3>
-      <textarea id="output" rows="10" readonly></textarea>
+  <h1>명함 HTML 생성기</h1>
+  <form id="businessCardForm" onsubmit="generateHtml(); return false;">
+    <div>
+      <label for="koreanName">이름 (한글):</label>
+      <input type="text" id="koreanName" placeholder="노 우 현" value="노 우 현">
     </div>
-    <!-- 미리보기 패널 -->
-    <div class="panel preview">
-      <h2>미리보기</h2>
-      <div id="sigPreview"></div>
+    <div>
+      <label for="englishName">이름 (영문):</label>
+      <input type="text" id="englishName" placeholder="U‑Hyun Roh" value="U‑Hyun Roh">
     </div>
-  </div>
+    <div>
+      <label for="org1">소속1:</label>
+      <input type="text" id="org1" placeholder="한국도로협회 기술연구센터" value="한국도로협회 기술연구센터">
+    </div>
+    <div>
+      <label for="org2">소속2/직위:</label>
+      <input type="text" id="org2" placeholder="도로교통연구실 연구원" value="도로교통연구실 연구원">
+    </div>
+    <div>
+      <label for="phone">전화번호:</label>
+      <input type="text" id="phone" placeholder="02-3490-1088" value="02-3490-1088">
+    </div>
+    <div>
+      <label for="fax">팩스번호:</label>
+      <input type="text" id="fax" placeholder="02-3490-1019" value="02-3490-1019">
+    </div>
+    <div>
+      <label for="mobile">휴대폰 번호:</label>
+      <input type="text" id="mobile" placeholder="010-6886-0368" value="010-6886-0368">
+    </div>
+    <div>
+      <label for="email">이메일:</label>
+      <input type="text" id="email" placeholder="roh@koroad.or.kr" value="roh@koroad.or.kr">
+    </div>
+    <div style="margin-top:12px;">
+      <button type="submit">확인</button>
+    </div>
+  </form>
+
+  <h2>생성된 HTML 코드</h2>
+  <textarea id="outputHtml" rows="20" readonly></textarea>
 
   <script>
-    (function() {
-      const FIXED = {
-        web:  'https://www.kroad.or.kr/',
-        logo: 'https://img.stibee.com/c80ba20a-5210-4ca9-840f-842741f5420b.png'
-      };
-
-      function v(id) {
-        return document.getElementById(id).value.trim();
-      }
-
-      function generate() {
-        console.log('generate() called');
-        const webText = FIXED.web.replace(/^https?:\/\//, '');
-        const html = `
-<table cellpadding="0" cellspacing="0" style="width:480px;font-family:Segoe UI, Tahoma, sans-serif;">
-  <tr>
-    <td style="padding:12px;background-color:#ffffff;border:1px solid #e0e0e0;border-radius:8px;">
-      <table cellpadding="0" cellspacing="0" style="width:100%;">
-        <tr>
-          <td style="width:64px;vertical-align:top;">
-            <img src="${FIXED.logo}" width="64" height="64" alt="Logo">
-          </td>
-          <td style="padding-left:12px;vertical-align:middle;">
-            <div style="font-size:16px;font-weight:600;color:#222;">
-              ${v('name')} ${v('ename') ? `<span style="font-weight:400;font-size:14px;color:#555;">(${v('ename')})</span>` : ''}
-            </div>
-            <div style="margin-top:4px;font-size:13px;color:#666;">
-              ${webText} ${v('center')  ? `| ${v('center')}` : ''} ${v('dept')    ? `| ${v('dept')}`   : ''}
-            </div>
-            <div style="font-size:13px;color:#666;">
-              ${v('title')}
-            </div>
-          </td>
-        </tr>
-      </table>
-      <hr>
-      <table cellpadding="0" cellspacing="0" style="width:100%;font-size:13px;color:#333;">
-        ${v('tel')   ? `<tr><td style="width:28px;">📞</td><td>${v('tel')}</td></tr>` : ''}
-        ${v('fax')   ? `<tr><td>📠</td><td>${v('fax')}</td></tr>` : ''}
-        ${v('mob')   ? `<tr><td>📱</td><td>${v('mob')}</td></tr>` : ''}
-        ${v('email')? `<tr><td>✉️</td><td>${v('email')}</td></tr>` : ''}
-        <tr><td>🌐</td><td><a href="${FIXED.web}" target="_blank">${FIXED.web}</a></td></tr>
-      </table>
-    </td>
-  </tr>
-</table>`.trim();
-
-        document.getElementById('output').value       = html;
-        document.getElementById('sigPreview').innerHTML = html;
-      }
-
-      document.getElementById('genBtn').addEventListener('click', generate);
-    })();
+    function generateHtml() {
+      var koreanName = document.getElementById('koreanName').value;
+      var englishName = document.getElementById('englishName').value;
+      var org1 = document.getElementById('org1').value;
+      var org2 = document.getElementById('org2').value;
+      var phone = document.getElementById('phone').value;
+      var fax = document.getElementById('fax').value;
+      var mobile = document.getElementById('mobile').value;
+      var email = document.getElementById('email').value;
+      
+      // 명함 HTML 구조 - 웹사이트와 프로필 이미지는 고정값입니다.
+      var htmlString = `<table cellpadding="0" cellspacing="0" style="width:480px;font-family:Segoe UI, Tahoma, sans-serif;">
+	<tbody>
+		<tr>
+			<td style="padding:12px;background-color:#ffffff;border:1px solid #e0e0e0;border-radius:8px;">
+				<table cellpadding="0" cellspacing="0" style="width:100%;">
+					<tbody>
+						<tr>
+							<td style="width:64px;vertical-align:top;">
+								<p style="font-family:굴림체;font-size:9pt;color:rgb(0, 0, 0);margin-top:0;margin-bottom:0;line-height:1.2;">
+                  <img src="https://img.stibee.com/c80ba20a-5210-4ca9-840f-842741f5420b.png" width="64" height="64" style="border-radius:50%;display:block;" alt="Profile" />
+                </p>
+							</td>
+							<td style="padding-left:12px;vertical-align:middle;">
+								<div style="font-size:16px;font-weight:600;color:#222;">
+									<p style="font-family:굴림체;font-size:12pt;color:rgb(34, 34, 34);margin:0;line-height:1.2;">${koreanName} <span style="font-weight:400;font-size:14px;color:#555;">(${englishName})</span></p>
+								</div>
+								<div style="margin-top:4px;font-size:13px;color:#666;">
+									<p style="font-family:굴림체;font-size:10pt;color:rgb(102, 102, 102);margin:0;line-height:1.2;">${org1}</p>
+								</div>
+								<div style="font-size:13px;color:#666;">
+									<p style="font-family:굴림체;font-size:10pt;color:rgb(102, 102, 102);margin:0;line-height:1.2;">${org2}</p>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<hr style="border:none;border-top:1px solid #f0f0f0;margin:12px 0;" />
+				<table cellpadding="0" cellspacing="0" style="width:100%;font-size:13px;color:#333;">
+					<tbody>
+						<tr>
+							<td style="width:28px;vertical-align:middle;">
+								<p style="font-family:굴림체;font-size:9pt;color:#000;margin:0;line-height:1.2;">📞</p>
+							</td>
+							<td style="vertical-align:middle;">
+								<p style="font-family:굴림체;font-size:9pt;color:#000;margin:0;line-height:1.2;">T. ${phone}</p>
+							</td>
+						</tr>
+						<tr>
+							<td style="padding-top:6px;vertical-align:middle;">
+								<p style="font-family:굴림체;font-size:9pt;color:#000;margin:0;line-height:1.2;">📠</p>
+							</td>
+							<td style="padding-top:6px;vertical-align:middle;">
+								<p style="font-family:굴림체;font-size:9pt;color:#000;margin:0;line-height:1.2;">F. ${fax}</p>
+							</td>
+						</tr>
+						<tr>
+							<td style="padding-top:6px;vertical-align:middle;">
+								<p style="font-family:굴림체;font-size:9pt;color:#000;margin:0;line-height:1.2;">📱</p>
+							</td>
+							<td style="padding-top:6px;vertical-align:middle;">
+								<p style="font-family:굴림체;font-size:9pt;color:#000;margin:0;line-height:1.2;">M. ${mobile}</p>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<div style="margin-top:12px;font-size:12px;color:#777;">
+					<p style="font-family:굴림체;font-size:9pt;color:rgb(119,119,119);margin:0;line-height:1.2;">
+            🌐 https://www.kroad.or.kr/ &nbsp;|&nbsp; ✉️ ${email}
+          </p>
+				</div>
+			</td>
+		</tr>
+	</tbody>
+</table>`;
+      
+      document.getElementById('outputHtml').value = htmlString;
+    }
   </script>
 </body>
 </html>
