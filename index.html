@@ -13,6 +13,7 @@
     .signature { border:1px solid #e0e0e0; border-radius:8px; padding:12px; width:480px; }
     .signature img { border-radius:50%; }
     .signature hr { border:none; border-top:1px solid #f0f0f0; margin:12px 0; }
+    button { padding: 8px 12px; cursor: pointer; }
   </style>
 </head>
 <body>
@@ -20,16 +21,15 @@
     <!-- 입력 패널 -->
     <div class="panel">
       <h2>정보 입력</h2>
-      <input type="text" id="name" placeholder="이름 (한글)">
-      <input type="text" id="ename" placeholder="영문 이름 (U‑Hyun Roh)">
-      <input type="text" id="title" placeholder="직함 (도로교통연구실 연구원)">
-      <input type="text" id="dept" placeholder="부서 (도로교통연구실)">
+      <input type="text" id="name"   placeholder="이름 (한글)">
+      <input type="text" id="ename"  placeholder="영문 이름 (U‑Hyun Roh)">
       <input type="text" id="center" placeholder="센터 (기술연구센터)">
-      <input type="url"  id="web"   placeholder="웹사이트 (https://example.com)">
-      <input type="text" id="tel"   placeholder="T. 번호 (02-3490-1088)">
-      <input type="text" id="fax"   placeholder="F. 번호 (02-3490-1019)">
-      <input type="text" id="mob"   placeholder="M. 번호 (010-6886-0368)">
-      <input type="email" id="email" placeholder="이메일 (roh@koroad.or.kr)">
+      <input type="text" id="dept"   placeholder="부서 (도로교통연구실)">
+      <input type="text" id="title"  placeholder="직함 (연구원)">
+      <input type="text" id="tel"    placeholder="T. 번호 (02-3490-1088)">
+      <input type="text" id="fax"    placeholder="F. 번호 (02-3490-1019)">
+      <input type="text" id="mob"    placeholder="M. 번호 (010-6886-0368)">
+      <input type="email" id="email" placeholder="✉️ 이메일 (roh@koroad.or.kr)">
       <button onclick="generate()">HTML 생성</button>
       <h3>생성된 코드</h3>
       <textarea id="output" rows="10" readonly></textarea>
@@ -42,10 +42,13 @@
   </div>
 
   <script>
+    const FIXED = {
+      web:  'https://www.kroad.or.kr/',
+      logo: 'https://img.stibee.com/c80ba20a-5210-4ca9-840f-842741f5420b.png'
+    };
+
     function generate() {
       const v = id => document.getElementById(id).value.trim();
-      const web = v('web').replace(/\/+$/, ''); // 끝 슬래시 제거
-      const logoUrl = web + '/logo.png';
       const html = `
 <table cellpadding="0" cellspacing="0" style="width:480px;font-family:Segoe UI, Tahoma, sans-serif;">
   <tr>
@@ -53,14 +56,16 @@
       <table cellpadding="0" cellspacing="0" style="width:100%;">
         <tr>
           <td style="width:64px;vertical-align:top;">
-            <img src="${logoUrl}" width="64" height="64" alt="Logo">
+            <img src="${FIXED.logo}" width="64" height="64" alt="Logo">
           </td>
           <td style="padding-left:12px;vertical-align:middle;">
             <div style="font-size:16px;font-weight:600;color:#222;">
               ${v('name')} ${v('ename') ? `<span style="font-weight:400;font-size:14px;color:#555;">(${v('ename')})</span>` : ''}
             </div>
             <div style="margin-top:4px;font-size:13px;color:#666;">
-              ${v('center')} ${v('dept') ? `| ${v('dept')}` : ''}
+              ${FIXED.web.replace(/https?:\\/\\//, '')}
+              ${v('center')  ? `| ${v('center')}` : ''}
+              ${v('dept')    ? `| ${v('dept')}`   : ''}
             </div>
             <div style="font-size:13px;color:#666;">
               ${v('title')}
@@ -73,14 +78,14 @@
         ${v('tel')   ? `<tr><td style="width:28px;">📞</td><td>${v('tel')}</td></tr>` : ''}
         ${v('fax')   ? `<tr><td>📠</td><td>${v('fax')}</td></tr>` : ''}
         ${v('mob')   ? `<tr><td>📱</td><td>${v('mob')}</td></tr>` : ''}
-        ${v('email') ? `<tr><td>✉️</td><td>${v('email')}</td></tr>` : ''}
-        ${web       ? `<tr><td>🌐</td><td><a href="${web}" target="_blank">${web}</a></td></tr>` : ''}
+        ${v('email')? `<tr><td>✉️</td><td>${v('email')}</td></tr>` : ''}
+        <tr><td>🌐</td><td><a href="${FIXED.web}" target="_blank">${FIXED.web}</a></td></tr>
       </table>
     </td>
   </tr>
 </table>`.trim();
 
-      document.getElementById('output').value = html;
+      document.getElementById('output').value     = html;
       document.getElementById('sigPreview').innerHTML = html;
     }
   </script>
